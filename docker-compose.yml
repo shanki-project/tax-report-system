@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "5001:5001"
+    networks:
+      - tax-network
+    depends_on:
+      - report-service
+
+  report-service:
+    build: ./report-service
+    ports:
+      - "5002:5002"
+    volumes:
+      - reports-data:/app/reports
+    networks:
+      - tax-network
+    depends_on:
+      - rename-service
+
+  rename-service:
+    build: ./rename-service
+    ports:
+      - "5003:5003"
+    volumes:
+      - reports-data:/app/reports
+    networks:
+      - tax-network
+    depends_on:
+      - db-service
+
+  db-service:
+    build: ./db-service
+    ports:
+      - "5004:5004"
+    volumes:
+      - reports-data:/app/reports
+    networks:
+      - tax-network
+    depends_on:
+      - notification-service
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "5005:5005"
+    networks:
+      - tax-network
+    environment:
+      - GMAIL_ADDRESS=${GMAIL_ADDRESS}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
+    depends_on:
+      - download-service
+
+  download-service:
+    build: ./download-service
+    ports:
+      - "5006:5006"
+    volumes:
+      - reports-data:/app/reports
+    networks:
+      - tax-network
+
+volumes:
+  reports-data:
+
+networks:
+  tax-network:
+    driver: bridge
