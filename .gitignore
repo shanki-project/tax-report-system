@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.env
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+
+# Reports (generated PDFs, don't commit these)
+reports/*.pdf
+
+# Secrets
+.env
